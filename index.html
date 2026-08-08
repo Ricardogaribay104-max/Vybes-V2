@@ -530,7 +530,7 @@
   async function loadFeed() {
   const { data, error } = await supabaseClient
     .from("posts")
-    .select("id,caption,media_url,media_type,vibe,created_at,user_id,profiles(username,display_name)")
+    .select("id,caption,media_url,media_type,vibe,created_at,user_id,profiles!posts_user_id_fkey(username,display_name)")
     .order("created_at", { ascending: false })
     .limit(30);
 

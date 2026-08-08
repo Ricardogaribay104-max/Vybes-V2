@@ -82,6 +82,37 @@
     .post-media video,.post-media img{width:100%;height:100%;object-fit:cover}
     .post-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.18) 58%,rgba(0,0,0,.92) 100%)}
     .post-copy{position:absolute;left:16px;right:82px;bottom:20px;z-index:4}
+    .post-actions{
+  position:absolute;
+  right:18px;
+  bottom:28px;
+  z-index:6;
+}
+
+.like-btn{
+  border:0;
+  background:rgba(0,0,0,.45);
+  color:white;
+  width:52px;
+  min-height:64px;
+  border-radius:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-weight:800;
+  backdrop-filter:blur(8px);
+}
+
+.like-heart{
+  font-size:30px;
+  line-height:1;
+}
+
+.like-count{
+  font-size:12px;
+}
     .creator{font-weight:900}
     .caption{margin-top:8px;line-height:1.4}
     .post-vibe{display:inline-flex;margin-top:9px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.16);font-size:12px}

@@ -589,10 +589,122 @@
       const media = post.media_type === "video"
         ? `<video src="${escapeAttr(post.media_url)}" muted playsinline></video>`
         : `<img src="${escapeAttr(post.media_url)}" alt="" />`;
-      return `<div class="tile">${media}</div>`;
+     return `<div class="tile" onclick="openUserProfile('${post.user_id}')">${media}</div>`;
     }).join("");
   }
+async function openUserProfile(userId) {
+  if (!userId || !state.user) return;
 
+  // If you clicked your own post, open your normal profile.
+  if (userId === state.user.id) {
+    await loadProfile();
+    setView("profileView");
+    return;
+  }
+
+  try {
+    const [
+      profileResult,
+      postsResult,
+      followersResult,
+      followingResult,
+      followResult,
+      petResult
+    ] = await Promise.all([
+      supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single(),
+
+      supabaseClient
+        .from("posts")
+        .select("id,media_url,media_type")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false }),
+
+      supabaseClient
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .eq("following_id", userId),
+
+      supabaseClient
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .eq("follower_id", userId),
+
+      supabaseClient
+        .from("follows")
+        .select("*")
+        .eq("follower_id", state.user.id)
+        .eq("following_id", userId)
+        .maybeSingle(),
+
+      supabaseClient
+        .from("user_pets")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle()
+    ]);
+
+    if (profileResult.error) throw profileResult.error;
+
+    const profile = profileResult.data;
+
+    $("#profileName").textContent =
+      profile.display_name || profile.username || "Vybes User";
+
+    $("#profileHandle").textContent =
+      `@${profile.username || "user"}`;
+
+    $("#profileBio").textContent = profile.bio || "";
+
+    $("#profileAvatar").textContent =
+      (profile.display_name || profile.username || "V")
+        .slice(0, 2)
+        .toUpperCase();
+
+    $("#ownerBadge").classList.toggle(
+      "hidden",
+      !profile.is_owner
+    );
+
+    $("#postCount").textContent =
+      postsResult.data?.length || 0;
+
+    $("#followerCount").textContent =
+      followersResult.count || 0;
+
+    $("#followingCount").textContent =
+      followingResult.count || 0;
+
+    $("#petName").textContent =
+      petResult.data?.pet_name || "Vybe Bear";
+
+    $("#profileGrid").innerHTML =
+      (postsResult.data || []).map(post => {
+        const media =
+          post.media_type === "video"
+            ? `<video src="${escapeAttr(post.media_url)}" muted playsinline></video>`
+            : `<img src="${escapeAttr(post.media_url)}" alt="" />`;
+
+        return `<div class="tile">${media}</div>`;
+      }).join("");
+
+    const button = $("#editProfileBtn");
+    const isFollowing = !!followResult.data;
+
+    button.textContent = isFollowing ? "Following" : "Follow";
+    button.dataset.profileUserId = userId;
+    button.dataset.following = isFollowing ? "true" : "false";
+
+    setView("profileView");
+
+  } catch (err) {
+    console.error("Profile error:", err);
+    toast(err.message || "Could not open profile.");
+  }
+}
   async function loadProfile() {
     if (!state.user) return;
     const profile = await ensureProfile(state.user);
@@ -602,7 +714,9 @@
     $("#profileBio").textContent = profile.bio || "";
     $("#profileAvatar").textContent = (profile.display_name || profile.username || "V").slice(0,2).toUpperCase();
     $("#ownerBadge").classList.toggle("hidden", !profile.is_owner);
-
+$("#editProfileBtn").textContent = "Edit";
+$("#editProfileBtn").removeAttribute("data-profile-user-id");
+$("#editProfileBtn").removeAttribute("data-following");
     const [
       postsResult,
       followersResult,
@@ -800,7 +914,62 @@
   $("#discoverInput").addEventListener("input", renderDiscover);
 
   // Profile / topbar
-  $("#editProfileBtn").addEventListener("click", editProfile);
+ $("#editProfileBtn").addEventListener("click", async () => {
+  const button = $("#editProfileBtn");
+  const targetUserId = button.dataset.profileUserId;
+
+  // Your own profile = keep normal Edit behavior.
+  if (!targetUserId || targetUserId === state.user?.id) {
+    await editProfile();
+    return;
+  }
+
+  const isFollowing = button.dataset.following === "true";
+
+  try {
+    button.disabled = true;
+
+    if (isFollowing) {
+      const { error } = await supabaseClient
+        .from("follows")
+        .delete()
+        .eq("follower_id", state.user.id)
+        .eq("following_id", targetUserId);
+
+      if (error) throw error;
+
+      button.textContent = "Follow";
+      button.dataset.following = "false";
+      toast("Unfollowed.");
+    } else {
+      const { error } = await supabaseClient
+        .from("follows")
+        .insert({
+          follower_id: state.user.id,
+          following_id: targetUserId
+        });
+
+      if (error) throw error;
+
+      button.textContent = "Following";
+      button.dataset.following = "true";
+      toast("Following!");
+    }
+
+    const { count } = await supabaseClient
+      .from("follows")
+      .select("*", { count: "exact", head: true })
+      .eq("following_id", targetUserId);
+
+    $("#followerCount").textContent = count || 0;
+
+  } catch (err) {
+    console.error("Follow error:", err);
+    toast(err.message || "Could not update follow.");
+  } finally {
+    button.disabled = false;
+  }
+});
   $("#logoutBtn").addEventListener("click", logout);
   $("#petBtn").addEventListener("click", async () => {
     await loadProfile();

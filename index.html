@@ -321,14 +321,14 @@
   );
 
   const state = {
-    session: null,
-    user: null,
-    profile: null,
-    vibe: null,
-    authMode: "login",
-    posts: []
-  };
-
+  session: null,
+  user: null,
+  profile: null,
+  vibe: null,
+  authMode: "login",
+  posts: [],
+  feedMode: "for-you"
+};
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -544,38 +544,90 @@
   renderFeed();
   renderDiscover();
 }
-  function renderFeed() {
-    const feed = $("#feed");
+async function renderFeed() {
+  const feed = $("#feed");
 
-    if (!state.posts.length) {
-      feed.innerHTML = `
-        <div class="empty-state">
-          <strong>No posts yet</strong>
-          Be the first person to post something on Vybes.
-        </div>`;
+  let postsToShow = state.posts;
+
+  if (state.feedMode === "following") {
+    const { data: follows, error } = await supabaseClient
+      .from("follows")
+      .select("following_id")
+      .eq("follower_id", state.user.id);
+
+    if (error) {
+      console.error("Following feed error:", error);
+      toast(error.message);
       return;
     }
 
-    feed.innerHTML = state.posts.map(post => {
-      const profile = post.profiles || {};
-      const creator = profile.display_name || profile.username || "Vybes User";
-      const handle = profile.username ? `@${profile.username}` : "";
-      const media = post.media_type === "video"
+    const followingIds = (follows || []).map(row => row.following_id);
+
+    postsToShow = state.posts.filter(post =>
+      followingIds.includes(post.user_id)
+    );
+  }
+
+  if (!postsToShow.length) {
+    feed.innerHTML = `
+      <div class="empty-state">
+        <strong>${
+          state.feedMode === "following"
+            ? "No posts from people you follow yet"
+            : "No posts yet"
+        }</strong>
+
+        ${
+          state.feedMode === "following"
+            ? "Follow some creators and their posts will show up here."
+            : "Be the first person to post something on Vybes."
+        }
+      </div>`;
+    return;
+  }
+
+  feed.innerHTML = postsToShow.map(post => {
+    const profile = post.profiles || {};
+
+    const creator =
+      profile.display_name ||
+      profile.username ||
+      "Vybes User";
+
+    const handle =
+      profile.username
+        ? `@${profile.username}`
+        : "";
+
+    const media =
+      post.media_type === "video"
         ? `<video src="${escapeAttr(post.media_url)}" controls playsinline loop></video>`
         : `<img src="${escapeAttr(post.media_url)}" alt="Vybes post" />`;
 
-      return `
-        <article class="post">
-          <div class="post-media">${media}</div>
-          <div class="post-shade"></div>
-          <div class="post-copy">
-            <div class="creator">${escapeHtml(creator)} <span class="muted">${escapeHtml(handle)}</span></div>
-            <div class="caption">${escapeHtml(post.caption || "")}</div>
-            ${post.vibe ? `<span class="post-vibe">${escapeHtml(post.vibe)}</span>` : ""}
+    return `
+      <article class="post">
+        <div class="post-media">${media}</div>
+        <div class="post-shade"></div>
+
+        <div class="post-copy">
+          <div class="creator">
+            ${escapeHtml(creator)}
+            <span class="muted">${escapeHtml(handle)}</span>
           </div>
-        </article>`;
-    }).join("");
-  }
+
+          <div class="caption">
+            ${escapeHtml(post.caption || "")}
+          </div>
+
+          ${
+            post.vibe
+              ? `<span class="post-vibe">${escapeHtml(post.vibe)}</span>`
+              : ""
+          }
+        </div>
+      </article>`;
+  }).join("");
+}
 
   function renderDiscover() {
     const q = ($("#discoverInput")?.value || "").trim().toLowerCase();
@@ -912,7 +964,18 @@ $("#editProfileBtn").removeAttribute("data-following");
   $("#mediaInput").addEventListener("change", previewMedia);
   $("#postForm").addEventListener("submit", createPost);
   $("#discoverInput").addEventListener("input", renderDiscover);
+$$(".feed-tabs .tab").forEach(tab => {
+  tab.addEventListener("click", async () => {
+    $$(".feed-tabs .tab").forEach(t => {
+      t.classList.remove("active");
+    });
 
+    tab.classList.add("active");
+    state.feedMode = tab.dataset.feed;
+
+    await renderFeed();
+  });
+});
   // Profile / topbar
  $("#editProfileBtn").addEventListener("click", async () => {
   const button = $("#editProfileBtn");

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#05070b" />
+  <title>Vybes</title>
+  <style>
+    :root{
+      --bg:#05070b;--panel:#0b1017;--panel2:#111824;--text:#f7fbff;--muted:#8d99aa;
+      --accent:#35b8ff;--accent2:#7c5cff;--good:#45e0a8;--danger:#ff5f77;--line:#1f2a38;
+      --glow:0 0 30px color-mix(in srgb,var(--accent) 34%,transparent);
+    }
+    *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{min-height:100vh;overflow-x:hidden} button,input,textarea{font:inherit} button{cursor:pointer}
+    .hidden{display:none!important}.app{max-width:540px;margin:0 auto;min-height:100vh;background:linear-gradient(180deg,#070b11 0%,#05070b 100%);position:relative}
+    .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(5,7,11,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.05)}
+    .brand{font-weight:900;letter-spacing:.18em;font-size:20px}.brand b{color:var(--accent);text-shadow:var(--glow)}
+    .top-actions{display:flex;gap:8px}.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);width:40px;height:40px;border-radius:13px}
+    main{padding-bottom:88px}.view{display:none;min-height:calc(100vh - 145px)}.view.active{display:block}
+    .section-head{padding:24px 18px 12px}.section-head h1{margin:0 0 6px;font-size:30px}.section-head p{margin:0;color:var(--muted)}
+    .card{margin:12px 16px;padding:16px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,var(--panel2),var(--panel));box-shadow:0 18px 50px rgba(0,0,0,.22)}
+    .primary-btn,.ghost-btn{border-radius:14px;padding:13px 16px;font-weight:800}.primary-btn{border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:var(--glow)}.ghost-btn{border:1px solid var(--line);background:var(--panel);color:var(--text)}
+
+    /* VIBE GATE */
+    #vibeView{padding:14px 16px 28px;background:radial-gradient(circle at 50% 5%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 34%)}
+    .vibe-hero{padding:34px 8px 16px;text-align:center}.vibe-logo{width:86px;height:86px;border-radius:28px;margin:0 auto 20px;display:grid;place-items:center;background:#0a111a;border:1px solid color-mix(in srgb,var(--accent) 55%,#243247);box-shadow:var(--glow);font-size:38px;font-weight:900;color:var(--accent)}
+    .vibe-hero h1{font-size:34px;line-height:1.04;margin:0 0 10px}.vibe-hero p{color:var(--muted);margin:0 auto;max-width:380px}
+    .vibe-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}.vibe-option{min-height:116px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(180deg,#111824,#0a0f16);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:.18s}.vibe-option span{font-size:31px}.vibe-option strong{font-size:16px}.vibe-option.selected{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--glow);background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 18%,#111824),#0a0f16)}
+    .vibe-option:last-child:nth-child(odd){grid-column:1/-1}.vibe-cta{width:100%;font-size:16px}.tiny-note{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+
+    /* FEED */
+    .feed-tabs{display:flex;gap:8px;padding:12px 16px;position:sticky;top:69px;z-index:20;background:rgba(5,7,11,.88);backdrop-filter:blur(14px)}.tab{border:0;background:transparent;color:var(--muted);padding:9px 12px;border-radius:12px;font-weight:800}.tab.active{background:var(--panel2);color:var(--text)}
+    .feed{display:grid;gap:12px;padding:0 12px 16px}.post{position:relative;overflow:hidden;border-radius:26px;border:1px solid var(--line);background:#05070b;min-height:620px}.post-media{position:absolute;inset:0;background:linear-gradient(155deg,#152233,#070b11 60%);display:grid;place-items:center}.post-media video,.post-media img{width:100%;height:100%;object-fit:cover}.mock-art{font-size:92px;filter:drop-shadow(0 8px 28px rgba(0,0,0,.4))}.post-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.18) 58%,rgba(0,0,0,.92) 100%)}
+    .post-copy{position:absolute;left:16px;right:82px;bottom:20px;z-index:4}.creator{font-weight:900}.caption{margin-top:8px;line-height:1.4}.post-vibe{display:inline-flex;margin-top:9px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.16);font-size:12px}.post-actions{position:absolute;right:12px;bottom:18px;z-index:4;display:grid;gap:13px}.action{display:grid;place-items:center;gap:3px;color:#fff;background:none;border:0;text-shadow:0 2px 10px #000}.action i{display:grid;place-items:center;width:45px;height:45px;border-radius:50%;background:rgba(0,0,0,.44);font-style:normal;font-size:21px;border:1px solid rgba(255,255,255,.13)}.action small{font-weight:800}
+
+    /* DISCOVER */
+    .search-box{display:flex;align-items:center;gap:10px;margin:6px 16px 14px;padding:13px 14px;border-radius:15px;background:var(--panel);border:1px solid var(--line)}.search-box input{width:100%;border:0;outline:0;background:transparent;color:var(--text)}.discover-grid,.profile-grid{padding:0 12px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.tile{aspect-ratio:3/4;border-radius:13px;background:linear-gradient(145deg,#162434,#090d14);display:grid;place-items:center;font-size:34px;border:1px solid rgba(255,255,255,.05);overflow:hidden}.tile img,.tile video{width:100%;height:100%;object-fit:cover}
+
+    /* CREATE */
+    .form-card{display:grid;gap:14px}.field{display:grid;gap:7px}.field span{font-weight:800}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:14px;background:#080d13;color:var(--text);padding:13px;outline:none}.field textarea{min-height:110px;resize:vertical}.upload-zone{padding:24px;border:1px dashed #38516d;border-radius:18px;text-align:center;background:#080d13}.upload-zone input{display:none}.upload-zone strong,.upload-zone small{display:block}.upload-zone small{color:var(--muted);margin-top:5px}.preview-wrap img,.preview-wrap video{width:100%;max-height:400px;border-radius:18px;object-fit:cover}
+
+    /* INBOX + ACTIVITY */
+    .list{padding:0 12px 20px;display:grid;gap:10px}.list-item{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent2),var(--accent));font-weight:900}.avatar.large{width:72px;height:72px;font-size:20px}.grow{flex:1}.muted{color:var(--muted);font-size:13px}.badge{padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,#111824);color:var(--accent);font-size:11px;font-weight:900}
+
+    /* PROFILE / PET */
+    .profile-hero{padding:22px 16px;display:flex;align-items:center;gap:13px}.profile-hero h1,.profile-hero p{margin:0}.profile-hero .ghost-btn{margin-left:auto}.stats{margin:0 16px 10px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:18px}.stats strong,.stats span{display:block}.stats span{color:var(--muted);font-size:12px;margin-top:3px}.bio{padding:0 18px 12px;color:#d6dde7}
+    .pet-card{position:relative;overflow:hidden}.pet-stage{min-height:230px;border-radius:20px;background:radial-gradient(circle at 50% 40%,rgba(53,184,255,.18),transparent 36%),#070b11;display:grid;place-items:center}.bear{width:140px;height:150px;position:relative}.ear{position:absolute;top:6px;width:48px;height:48px;border-radius:50%;background:#111}.ear.l{left:5px}.ear.r{right:5px}.head{position:absolute;left:18px;right:18px;top:20px;height:100px;border-radius:46% 46% 43% 43%;background:#111;border:2px solid #1c2b3a;box-shadow:0 0 28px rgba(53,184,255,.25)}.muzzle{position:absolute;left:37px;right:37px;top:68px;height:45px;border-radius:50%;background:#1b1b1d}.nose{position:absolute;left:61px;top:72px;width:18px;height:12px;border-radius:50%;background:#050505}.eye{position:absolute;top:52px;width:9px;height:9px;background:#35b8ff;border-radius:50%;box-shadow:0 0 10px #35b8ff}.eye.l{left:48px}.eye.r{right:48px}.body{position:absolute;left:25px;right:25px;bottom:0;height:76px;border-radius:42% 42% 32% 32%;background:#0d1015;border:2px solid #1c2b3a}.vmark{position:absolute;left:50%;transform:translateX(-50%);top:22px;color:#35b8ff;font-size:29px;font-weight:1000;text-shadow:0 0 14px #35b8ff}.owner-tag{position:absolute;top:16px;right:16px}.pet-actions{display:flex;gap:8px;margin-top:12px}.pet-actions button{flex:1}.cosmetic-row{display:flex;gap:9px;overflow:auto;padding-bottom:4px}.cosmetic{min-width:84px;padding:10px;border-radius:14px;border:1px solid var(--line);background:#090e15;text-align:center}.cosmetic.locked{opacity:.55}.cosmetic span{display:block;font-size:24px}.cosmetic small{color:var(--muted)}
+
+    /* MODAL / NAV */
+    .modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:end center}.modal-card{width:min(540px,100%);max-height:82vh;overflow:auto;border-radius:26px 26px 0 0;background:#080d13;border:1px solid var(--line);padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{margin:0}.close-btn{border:0;background:transparent;color:var(--text);font-size:25px}
+    .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:50;width:min(540px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:rgba(6,9,14,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.nav-btn{border:0;background:transparent;color:var(--muted);display:grid;place-items:center;gap:2px;padding:5px}.nav-btn span{font-size:21px}.nav-btn small{font-size:10px}.nav-btn.active{color:var(--accent)}.create-nav span{width:42px;height:32px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:white;box-shadow:var(--glow)}
+    .toast{position:fixed;left:50%;bottom:94px;transform:translateX(-50%);z-index:200;padding:11px 14px;background:#111824;border:1px solid var(--line);border-radius:13px;box-shadow:0 18px 50px #0008;max-width:90%;text-align:center}
+    @media(max-width:420px){.post{min-height:calc(100vh - 155px);border-radius:0}.feed{padding:0}.vibe-hero h1{font-size:30px}}
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar hidden" id="topbar">
+    <div class="brand">VY<b>BES</b></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="petBtn" title="Vybe Bear">🐻</button>
+      <button class="icon-btn" id="inboxBtn" title="Inbox">✉</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="vibeView" class="view active">
+      <div class="vibe-hero">
+        <div class="vibe-logo">V</div>
+        <h1>What are the vibes for today?</h1>
+        <p>Pick your mood and Vybes will match the energy of your app.</p>
+      </div>
+      <div class="vibe-options">
+        <button class="vibe-option" data-vibe="chill"><span>😌</span><strong>Chill</strong></button>
+        <button class="vibe-option" data-vibe="hype"><span>🔥</span><strong>Hype</strong></button>
+        <button class="vibe-option" data-vibe="lowkey"><span>🌙</span><strong>Lowkey</strong></button>
+        <button class="vibe-option" data-vibe="happy"><span>💙</span><strong>Happy</strong></button>
+        <button class="vibe-option" data-vibe="focused"><span>⚡</span><strong>Focused</strong></button>
+      </div>
+      <button id="setVibeBtn" class="primary-btn vibe-cta">Set my Vybe</button>
+      <div class="tiny-note">You can change your Vybe anytime.</div>
+    </section>
+
+    <section id="feedView" class="view">
+      <div class="feed-tabs"><button class="tab active" data-feed="for-you">For You</button><button class="tab" data-feed="following">Following</button></div>
+      <div id="feed" class="feed"></div>
+    </section>
+
+    <section id="discoverView" class="view">
+      <div class="section-head"><h1>Discover</h1><p>Find creators, clips, and fresh vybes.</p></div>
+      <label class="search-box"><span>⌕</span><input id="discoverInput" type="search" placeholder="Search Vybes" /></label>
+      <div id="discoverGrid" class="discover-grid"></div>
+    </section>
+
+    <section id="createView" class="view">
+      <div class="section-head"><h1>Create</h1><p>Post a photo or video to your community.</p></div>
+      <form id="postForm" class="card form-card">
+        <label class="field"><span>Caption</span><textarea id="captionInput" maxlength="220" placeholder="What’s the vybe?"></textarea></label>
+        <label class="upload-zone" for="mediaInput"><input id="mediaInput" type="file" accept="image/*,video/*" /><strong>Choose photo or video</strong><small>MP4, MOV, JPG, PNG</small></label>
+        <div id="previewWrap" class="preview-wrap hidden"></div>
+        <button class="primary-btn" type="submit">Post to Vybes</button>
+      </form>
+    </section>
+
+    <section id="activityView" class="view">
+      <div class="section-head"><h1>Activity</h1><p>Likes, follows, comments, and mentions.</p></div>
+      <div id="activityList" class="list"></div>
+    </section>
+
+    <section id="profileView" class="view">
+      <div class="profile-hero"><div class="avatar large">RG</div><div><h1 id="profileName">Ricardo</h1><p id="profileHandle">@ricardo</p></div><button class="ghost-btn" id="editProfileBtn">Edit</button></div>
+      <div class="stats"><div><strong id="postCount">0</strong><span>Posts</span></div><div><strong>0</strong><span>Followers</span></div><div><strong>0</strong><span>Following</span></div></div>
+      <p class="bio" id="profileBio">Building Vybes. ⚡</p>
+      <div class="card pet-card"><span class="badge owner-tag">OWNER</span><h3 style="margin-top:0">My Vybe Bear</h3><div class="pet-stage" id="miniPet"></div><div class="pet-actions"><button class="ghost-btn" id="customizePetBtn">Customize</button><button class="primary-btn" id="hangoutPetBtn">Hang out</button></div></div>
+      <div id="profileGrid" class="profile-grid"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav hidden" id="bottomNav">
+    <button class="nav-btn active" data-view="feedView"><span>⌂</span><small>Home</small></button>
+    <button class="nav-btn" data-view="discoverView"><span>⌕</span><small>Discover</small></button>
+    <button class="nav-btn create-nav" data-view="createView"><span>＋</span><small>Create</small></button>
+    <button class="nav-btn" data-view="activityView"><span>♡</span><small>Activity</small></button>
+    <button class="nav-btn" data-view="profileView"><span>◎</span><small>Profile</small></button>
+  </nav>
+</div>
+
+<div id="modalRoot"></div><div id="toast" class="toast hidden"></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const state = {
+    vibe: localStorage.getItem('vybes:vibe') || null,
+    posts: JSON.parse(localStorage.getItem('vybes:posts') || '[]'),
+    selectedFile: null
+  };
+
+  const vibeThemes = {
+    chill:{accent:'#68d7ff',accent2:'#6d7cff'}, hype:{accent:'#ff4f79',accent2:'#ff9f43'},
+    lowkey:{accent:'#9b78ff',accent2:'#4d68ff'}, happy:{accent:'#35c8ff',accent2:'#41e6a2'}, focused:{accent:'#2ee6c5',accent2:'#3b82f6'}
+  };
+
+  function applyVibe(vibe){ const t=vibeThemes[vibe]||vibeThemes.happy; document.documentElement.style.setProperty('--accent',t.accent);document.documentElement.style.setProperty('--accent2',t.accent2); }
+  function showToast(msg){ const t=$('#toast'); t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),1800); }
+  function showView(id){ $$('.view').forEach(v=>v.classList.toggle('active',v.id===id)); $$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===id)); window.scrollTo({top:0,behavior:'instant'}); }
+  function enterApp(){ $('#vibeView').classList.remove('active'); $('#topbar').classList.remove('hidden'); $('#bottomNav').classList.remove('hidden'); showView('feedView'); renderAll(); }
+
+  $$('.vibe-option').forEach(btn=>btn.addEventListener('click',()=>{ $$('.vibe-option').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); state.vibe=btn.dataset.vibe;applyVibe(state.vibe); }));
+  $('#setVibeBtn').addEventListener('click',()=>{ if(!state.vibe){showToast('Pick a Vybe first ✨');return;} localStorage.setItem('vybes:vibe',state.vibe);enterApp(); });
+  if(state.vibe){ applyVibe(state.vibe); const b=$(`.vibe-option[data-vibe="${state.vibe}"]`); if(b)b.classList.add('selected'); }
+
+  $$('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.view)));
+  $$('.tab').forEach(btn=>btn.addEventListener('click',()=>{ $$('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showToast(btn.dataset.feed==='following'?'Following feed selected':'For You feed selected'); }));
+
+  function ownerBear(){ return `<div class="bear"><div class="ear l"></div><div class="ear r"></div><div class="head"></div><div class="muzzle"></div><div class="nose"></div><div class="eye l"></div><div class="eye r"></div><div class="body"><div class="vmark">V</div></div></div>`; }
+  function renderPet(){ $('#miniPet').innerHTML=ownerBear(); }
+
+  const mockPosts=[
+    {id:'m1',creator:'@vybes',caption:'Welcome to your new feed. Pick a mood and make it yours.',vibe:'happy',emoji:'⚡',likes:218,comments:34},
+    {id:'m2',creator:'@nightdrive',caption:'Late-night cruise energy 🌙',vibe:'lowkey',emoji:'🌃',likes:884,comments:72},
+    {id:'m3',creator:'@gymvybes',caption:'Locked in. One more set.',vibe:'focused',emoji:'🏋️',likes:401,comments:28}
+  ];
+  function postCard(p){ const media=p.url ? (p.type?.startsWith('video')?`<video src="${p.url}" autoplay muted loop playsinline></video>`:`<img src="${p.url}" alt="post">`) : `<div class="mock-art">${p.emoji||'🎬'}</div>`;return `<article class="post"><div class="post-media">${media}</div><div class="post-shade"></div><div class="post-copy"><div class="creator">${p.creator||'@ricardo'}</div><div class="caption">${escapeHtml(p.caption||'New Vybe')}</div><div class="post-vibe">${vibeEmoji(p.vibe||state.vibe)} ${(p.vibe||state.vibe||'happy').toUpperCase()} VYBE</div></div><div class="post-actions"><button class="action" data-like="${p.id}"><i>♡</i><small>${p.likes||0}</small></button><button class="action"><i>💬</i><small>${p.comments||0}</small></button><button class="action"><i>↗</i><small>Share</small></button><button class="action"><i>🐻</i><small>Bear</small></button></div></article>`; }
+  function renderFeed(){ $('#feed').innerHTML=[...state.posts,...mockPosts].map(postCard).join(''); $('#postCount').textContent=state.posts.length; }
+  function vibeEmoji(v){ return ({chill:'😌',hype:'🔥',lowkey:'🌙',happy:'💙',focused:'⚡'})[v]||'✨'; }
+  function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+  $('#mediaInput').addEventListener('change',e=>{ const file=e.target.files[0];state.selectedFile=file||null;const w=$('#previewWrap');if(!file){w.classList.add('hidden');w.innerHTML='';return;}const url=URL.createObjectURL(file);w.classList.remove('hidden');w.innerHTML=file.type.startsWith('video')?`<video src="${url}" controls playsinline></video>`:`<img src="${url}" alt="preview">`; });
+  $('#postForm').addEventListener('submit',e=>{e.preventDefault();const caption=$('#captionInput').value.trim();if(!state.selectedFile){showToast('Choose a photo or video first');return;}const url=URL.createObjectURL(state.selectedFile);state.posts.unshift({id:crypto.randomUUID(),creator:'@ricardo',caption:caption||'New Vybe',vibe:state.vibe||'happy',url,type:state.selectedFile.type,likes:0,comments:0});
+    // NOTE: blob URLs are session-only. Supabase wiring replaces this with permanent uploads.
+    $('#captionInput').value='';$('#mediaInput').value='';$('#previewWrap').innerHTML='';$('#previewWrap').classList.add('hidden');state.selectedFile=null;renderAll();showView('feedView');showToast('Posted to Vybes ⚡'); });
+
+  function renderDiscover(){ const icons=['🎮','🚗','🏀','🎵','🌅','🏋️','😂','🐻','🎨','🛹','🍜','⚡']; $('#discoverGrid').innerHTML=icons.map(i=>`<div class="tile">${i}</div>`).join(''); }
+  $('#discoverInput').addEventListener('input',e=>{ if(e.target.value.trim()) showToast(`Searching for “${e.target.value.trim()}”`); });
+
+  function renderActivity(){ const rows=[['🔥','@jay liked your post','2m'],['💬','@mia commented: “this is clean”','8m'],['＋','@alex followed you','19m'],['🐻','@luna sent your Vybe Bear a wave','1h']]; $('#activityList').innerHTML=rows.map(r=>`<div class="list-item"><div class="avatar">${r[0]}</div><div class="grow"><strong>${r[1]}</strong><div class="muted">${r[2]}</div></div></div>`).join(''); }
+  function renderProfile(){ $('#profileGrid').innerHTML=state.posts.length?state.posts.map(p=>`<div class="tile">${p.url?(p.type.startsWith('video')?`<video src="${p.url}" muted></video>`:`<img src="${p.url}" alt="post">`):'⚡'}</div>`).join(''):`<div class="tile">⚡</div><div class="tile">🐻</div><div class="tile">🎬</div>`; renderPet(); }
+
+  function openModal(html){ $('#modalRoot').innerHTML=`<div class="modal" id="modal"><div class="modal-card">${html}</div></div>`; $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()}); $$('.close-btn').forEach(b=>b.onclick=closeModal); }
+  function closeModal(){ $('#modalRoot').innerHTML=''; }
+  $('#petBtn').onclick=()=>openPet(); $('#customizePetBtn').onclick=()=>openPet(); $('#hangoutPetBtn').onclick=()=>showToast('Your Vybe Bear is hanging out with you 🐻');
+  function openPet(){ openModal(`<div class="modal-head"><h2>Vybe Bear</h2><button class="close-btn">×</button></div><p class="muted">Your owner bear is unique to the Vybes founder account.</p><div class="pet-stage">${ownerBear()}</div><h3>Cosmetics</h3><div class="cosmetic-row"><div class="cosmetic"><span>🕶️</span><small>Shades</small></div><div class="cosmetic"><span>👑</span><small>Crown</small></div><div class="cosmetic"><span>🎧</span><small>Headset</small></div><div class="cosmetic locked"><span>🪽</span><small>Locked</small></div><div class="cosmetic locked"><span>⚡</span><small>Locked</small></div></div><p class="tiny-note">Purchasable cosmetics can plug into the store later.</p>`); }
+
+  $('#inboxBtn').onclick=()=>openModal(`<div class="modal-head"><h2>Inbox</h2><button class="close-btn">×</button></div><div class="list" style="padding:12px 0"><div class="list-item"><div class="avatar">M</div><div class="grow"><strong>@mia</strong><div class="muted">That clip was fire 🔥</div></div><span class="badge">2</span></div><div class="list-item"><div class="avatar">J</div><div class="grow"><strong>@jay</strong><div class="muted">You on later?</div></div></div><div class="list-item"><div class="avatar">A</div><div class="grow"><strong>@alex</strong><div class="muted">Sent a Vybe Bear reaction 🐻</div></div></div></div><button class="primary-btn" style="width:100%" onclick="document.querySelector('#toast').textContent='Realtime Supabase DMs are ready for backend wiring';document.querySelector('#toast').classList.remove('hidden');setTimeout(()=>document.querySelector('#toast').classList.add('hidden'),1800)">New message</button>`);
+
+  $('#editProfileBtn').onclick=()=>{
+    openModal(`<div class="modal-head"><h2>Edit profile</h2><button class="close-btn">×</button></div><div class="form-card"><label class="field"><span>Display name</span><input id="editName" value="${escapeHtml($('#profileName').textContent)}"></label><label class="field"><span>Handle</span><input id="editHandle" value="${escapeHtml($('#profileHandle').textContent)}"></label><label class="field"><span>Bio</span><textarea id="editBio">${escapeHtml($('#profileBio').textContent)}</textarea></label><button class="primary-btn" id="saveProfile">Save changes</button></div>`);
+    setTimeout(()=>{
+      const b=$('#saveProfile');
+      if(b)b.onclick=()=>{
+        $('#profileName').textContent=$('#editName').value||'Ricardo';
+        $('#profileHandle').textContent=$('#editHandle').value||'@ricardo';
+        $('#profileBio').textContent=$('#editBio').value;
+        closeModal();showToast('Profile updated');
+      };
+    },0);
+  };
+
+  function renderAll(){renderFeed();renderDiscover();renderActivity();renderProfile();}
+  renderAll();
+  // Keep vibe gate on every fresh page load so the daily mood prompt is visible.
+})();
+</script>
+</body>
+</html>

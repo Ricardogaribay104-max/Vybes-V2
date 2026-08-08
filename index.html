@@ -608,7 +608,17 @@ async function renderFeed() {
       <article class="post">
         <div class="post-media">${media}</div>
         <div class="post-shade"></div>
-
+<div class="post-actions">
+  <button
+    class="like-btn"
+    data-post-id="${post.id}"
+    type="button"
+    onclick="toggleLike('${post.id}', this)"
+  >
+    <span class="like-heart">♡</span>
+    <span class="like-count">0</span>
+  </button>
+</div>
         <div class="post-copy">
           <div class="creator">
             ${escapeHtml(creator)}
@@ -626,9 +636,103 @@ async function renderFeed() {
           }
         </div>
       </article>`;
-  }).join("");
-}
+}).join("");
 
+await loadLikeStates();
+}
+  async function loadLikeStates() {
+  if (!state.user) return;
+
+  const buttons = [...document.querySelectorAll(".like-btn")];
+
+  await Promise.all(buttons.map(async button => {
+    const postId = button.dataset.postId;
+    const heart = button.querySelector(".like-heart");
+    const countEl = button.querySelector(".like-count");
+
+    const [likeResult, countResult] = await Promise.all([
+      supabaseClient
+        .from("post_likes")
+        .select("post_id")
+        .eq("post_id", postId)
+        .eq("user_id", state.user.id)
+        .maybeSingle(),
+
+      supabaseClient
+        .from("post_likes")
+        .select("*", { count: "exact", head: true })
+        .eq("post_id", postId)
+    ]);
+
+    if (!likeResult.error) {
+      heart.textContent = likeResult.data ? "♥" : "♡";
+    }
+
+    if (!countResult.error) {
+      countEl.textContent = countResult.count || 0;
+    }
+  }));
+}
+  async function toggleLike(postId, button) {
+  if (!state.user) {
+    toast("Log in first.");
+    return;
+  }
+
+  try {
+    button.disabled = true;
+
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("post_likes")
+      .select("post_id,user_id")
+      .eq("post_id", postId)
+      .eq("user_id", state.user.id)
+      .maybeSingle();
+
+    if (checkError) throw checkError;
+
+    const heart = button.querySelector(".like-heart");
+    const countEl = button.querySelector(".like-count");
+
+    if (existing) {
+      const { error } = await supabaseClient
+        .from("post_likes")
+        .delete()
+        .eq("post_id", postId)
+        .eq("user_id", state.user.id);
+
+      if (error) throw error;
+
+      heart.textContent = "♡";
+    } else {
+      const { error } = await supabaseClient
+        .from("post_likes")
+        .insert({
+          post_id: postId,
+          user_id: state.user.id
+        });
+
+      if (error) throw error;
+
+      heart.textContent = "♥";
+    }
+
+    const { count, error: countError } = await supabaseClient
+      .from("post_likes")
+      .select("*", { count: "exact", head: true })
+      .eq("post_id", postId);
+
+    if (countError) throw countError;
+
+    countEl.textContent = count || 0;
+
+  } catch (err) {
+    console.error("Like error:", err);
+    toast(err.message || "Could not update like.");
+  } finally {
+    button.disabled = false;
+  }
+}
   function renderDiscover() {
     const q = ($("#discoverInput")?.value || "").trim().toLowerCase();
     const rows = state.posts.filter(post => {

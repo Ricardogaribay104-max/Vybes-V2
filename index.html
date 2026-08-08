@@ -587,8 +587,8 @@
 
     $("#discoverGrid").innerHTML = rows.map(post => {
       const media = post.media_type === "video"
-        ? `<video src="${escapeAttr(post.media_url)}" muted playsinline></video>`
-        : `<img src="${escapeAttr(post.media_url)}" alt="" />`;
+       ? `<video src="${escapeAttr(post.media_url)}" muted playsinline style="pointer-events:none"></video>`
+        : `<img src="${escapeAttr(post.media_url)}" alt="" style="pointer-events:none" />`;
      return `<div class="tile" onclick="openUserProfile('${post.user_id}')">${media}</div>`;
     }).join("");
   }

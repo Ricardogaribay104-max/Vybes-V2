@@ -1364,6 +1364,7 @@ $$(".feed-tabs .tab").forEach(tab => {
       button.textContent = "Follow";
       button.dataset.following = "false";
       toast("Unfollowed.");
+      await loadFeed();
     } else {
       const { error } = await supabaseClient
         .from("follows")
@@ -1378,7 +1379,7 @@ $$(".feed-tabs .tab").forEach(tab => {
       button.dataset.following = "true";
       toast("Following!");
     }
-
+await loadFeed();
     const { count } = await supabaseClient
       .from("follows")
       .select("*", { count: "exact", head: true })

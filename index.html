@@ -80,19 +80,12 @@
     .post{position:relative;overflow:hidden;border-radius:26px;border:1px solid var(--line);background:#05070b;min-height:620px}
     .post-media{position:absolute;inset:0;background:linear-gradient(155deg,#152233,#070b11 60%);display:grid;place-items:center}
     .post-media video,.post-media img{width:100%;height:100%;object-fit:cover}
-    .post-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.18) 58%,rgba(0,0,0,.92) 100%)}
-    .post-copy{position:absolute;left:16px;right:82px;bottom:20px;z-index:4}
-  .post-actions{
+   .post-shade{
   position:absolute;
-  right:18px;
-  bottom:28px;
-  z-index:6;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
+  inset:0;
+  background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.18) 58%,rgba(0,0,0,.92) 100%);
+  pointer-events:none;
 }
-
 .like-btn{
   border:0;
   background:rgba(0,0,0,.45);
@@ -364,7 +357,29 @@
       </div>
       <div id="feed" class="feed"></div>
     </section>
+<div id="commentsModal" class="comments-modal hidden">
+  <div class="comments-panel">
+    <div class="comments-header">
+      <strong>Comments</strong>
+      <button type="button" onclick="closeComments()">✕</button>
+    </div>
 
+    <div id="commentsList" class="comments-list">
+      <div class="muted">Loading comments...</div>
+    </div>
+
+    <form id="commentForm" class="comment-form">
+      <input
+        id="commentInput"
+        type="text"
+        placeholder="Add a comment..."
+        maxlength="500"
+        autocomplete="off"
+      />
+      <button type="submit">Post</button>
+    </form>
+  </div>
+</div>
     <section id="discoverView" class="view">
       <div class="section-head">
         <h1>Discover</h1>

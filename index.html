@@ -639,7 +639,8 @@ async function renderFeed() {
       <article class="post">
         <div class="post-media">${media}</div>
         <div class="post-shade"></div>
-<div class="post-actions">
+
+ <div class="post-actions">
   <button
     class="like-btn"
     data-post-id="${post.id}"
@@ -648,6 +649,16 @@ async function renderFeed() {
   >
     <span class="like-heart">♡</span>
     <span class="like-count">0</span>
+  </button>
+
+  <button
+    class="comment-btn"
+    data-post-id="${post.id}"
+    type="button"
+    onclick="openComments('${post.id}')"
+  >
+    <span class="comment-icon">💬</span>
+    <span class="comment-count">0</span>
   </button>
 </div>
         <div class="post-copy">
@@ -763,6 +774,10 @@ await loadLikeStates();
   } finally {
     button.disabled = false;
   }
+}
+  async function openComments(postId) {
+  console.log("Opening comments for post:", postId);
+  alert("Comments button works!");
 }
   function renderDiscover() {
     const q = ($("#discoverInput")?.value || "").trim().toLowerCase();

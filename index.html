@@ -82,11 +82,15 @@
     .post-media video,.post-media img{width:100%;height:100%;object-fit:cover}
     .post-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.18) 58%,rgba(0,0,0,.92) 100%)}
     .post-copy{position:absolute;left:16px;right:82px;bottom:20px;z-index:4}
-    .post-actions{
+  .post-actions{
   position:absolute;
   right:18px;
   bottom:28px;
   z-index:6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
 }
 
 .like-btn{
@@ -260,13 +264,28 @@
 }
 
 .comment-btn{
-  background:transparent;
   border:0;
+  background:rgba(0,0,0,.45);
   color:white;
+  width:52px;
+  min-height:58px;
+  border-radius:18px;
   cursor:pointer;
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:5px;
+  justify-content:center;
+  gap:3px;
+  font-weight:800;
+  backdrop-filter:blur(8px);
+}
+    .comment-icon{
+  font-size:24px;
+  line-height:1;
+}
+
+.comment-count{
+  font-size:12px;
 }
   </style>
 </head>

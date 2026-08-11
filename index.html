@@ -1549,8 +1549,12 @@ async function openUserProfile(userId) {
         .slice(0, 2)
         .toUpperCase();
 
-    $("#ownerBadge").classList.toggle(
-      if (profile.is_owner) {
+  $("#ownerBadge").classList.toggle(
+  "hidden",
+  !profile.is_owner
+);
+
+if (profile.is_owner) {
   const furInput = document.querySelector("#bearFurColor");
   const eyeInput = document.querySelector("#bearEyeColor");
   const vInput = document.querySelector("#bearVColor");
@@ -1567,14 +1571,10 @@ async function openUserProfile(userId) {
 
   previewBearCustomization();
 
-  const svg = document.querySelector(".vybe-bear");
-  svg?.classList.add("owner-bear");
+  document.querySelector(".vybe-bear")?.classList.add("owner-bear");
 } else {
   document.querySelector(".vybe-bear")?.classList.remove("owner-bear");
 }
-      "hidden",
-      !profile.is_owner
-    );
 
     $("#postCount").textContent =
       postsResult.data?.length || 0;
@@ -1612,45 +1612,24 @@ async function openUserProfile(userId) {
     toast(err.message || "Could not open profile.");
   }
 }
-  function previewBearCustomization() {
-    const headAccessory =
-  document.querySelector("#bearHeadAccessory")?.value || "none";
+function previewBearCustomization() {
+  const headAccessory =
+    document.querySelector("#bearHeadAccessory")?.value || "none";
 
-const faceAccessory =
-  document.querySelectorAll("#bearHeadLayer .bear-accessory")
-  .forEach(el => el.classList.add("hidden"));
+  const faceAccessory =
+    document.querySelector("#bearFaceAccessory")?.value || "none";
 
-document.querySelectorAll("#bearFaceLayer .bear-accessory")
-  .forEach(el => el.classList.add("hidden"));
+  const fur =
+    document.querySelector("#bearFurColor")?.value || "#161c25";
 
-if (headAccessory === "cap") {
-  document.querySelector("#bearCap")?.classList.remove("hidden");
-}
+  const eyes =
+    document.querySelector("#bearEyeColor")?.value || "#35b8ff";
 
-if (headAccessory === "crown") {
-  document.querySelector("#bearCrown")?.classList.remove("hidden");
-}
+  const vColor =
+    document.querySelector("#bearVColor")?.value || "#35b8ff";
 
-if (headAccessory === "horns") {
-  document.querySelector("#bearHorns")?.classList.remove("hidden");
-}
-
-if (faceAccessory === "glasses") {
-  document.querySelector("#bearGlasses")?.classList.remove("hidden");
-}
-
-if (faceAccessory === "visor") {
-  document.querySelector("#bearVisor")?.classList.remove("hidden");
-}
-
-if (faceAccessory === "mask") {
-  document.querySelector("#bearMask")?.classList.remove("hidden");
-}
-  document.querySelector("#bearFaceAccessory")?.value || "none";
-  const fur = document.querySelector("#bearFurColor")?.value || "#161c25";
-  const eyes = document.querySelector("#bearEyeColor")?.value || "#35b8ff";
-  const vColor = document.querySelector("#bearVColor")?.value || "#35b8ff";
-  const aura = document.querySelector("#bearAura")?.value || "none";
+  const aura =
+    document.querySelector("#bearAura")?.value || "none";
 
   const svg = document.querySelector(".vybe-bear");
   if (!svg) return;
@@ -1668,9 +1647,39 @@ if (faceAccessory === "mask") {
   if (aura !== "none") {
     svg.classList.add(`aura-${aura}`);
   }
-}
 
-function setupBearCustomizer() {
+  document
+    .querySelectorAll("#bearHeadLayer .bear-accessory")
+    .forEach(el => el.classList.add("hidden"));
+
+  document
+    .querySelectorAll("#bearFaceLayer .bear-accessory")
+    .forEach(el => el.classList.add("hidden"));
+
+  if (headAccessory === "cap") {
+    document.querySelector("#bearCap")?.classList.remove("hidden");
+  }
+
+  if (headAccessory === "crown") {
+    document.querySelector("#bearCrown")?.classList.remove("hidden");
+  }
+
+  if (headAccessory === "horns") {
+    document.querySelector("#bearHorns")?.classList.remove("hidden");
+  }
+
+  if (faceAccessory === "glasses") {
+    document.querySelector("#bearGlasses")?.classList.remove("hidden");
+  }
+
+  if (faceAccessory === "visor") {
+    document.querySelector("#bearVisor")?.classList.remove("hidden");
+  }
+
+  if (faceAccessory === "mask") {
+    document.querySelector("#bearMask")?.classList.remove("hidden");
+  }
+}
   [
     "#bearFurColor",
     "#bearEyeColor",

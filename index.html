@@ -749,15 +749,12 @@ async function renderFeed() {
   feed.innerHTML = postsToShow.map(post => {
     const profile = post.profiles || {};
 
-    const creator =
-      profile.display_name ||
-      profile.username ||
-      "Vybes User";
+   const creator =
+  profile.username
+    ? `@${profile.username}`
+    : (profile.display_name || "Vybes User");
 
-    const handle =
-      profile.username
-        ? `@${profile.username}`
-        : "";
+const handle = "";
 
     const media =
       post.media_type === "video"

@@ -791,11 +791,14 @@ async function renderFeed() {
   </button>
 </div>
         <div class="post-copy">
-          <div class="creator">
-            ${escapeHtml(creator)}
-            <span class="muted">${escapeHtml(handle)}</span>
-          </div>
-
+         <div
+  class="creator"
+  onclick="openUserProfile('${post.user_id}')"
+  style="cursor:pointer;"
+>
+  ${escapeHtml(creator)}
+  <span class="muted">${escapeHtml(handle)}</span>
+</div>
           <div class="caption">
             ${escapeHtml(post.caption || "")}
           </div>

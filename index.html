@@ -190,6 +190,38 @@
 }
 
 .bear-vmark{
+  .owner-bear{
+  filter:
+    drop-shadow(0 0 10px rgba(53,184,255,.55))
+    drop-shadow(0 0 24px rgba(53,184,255,.28));
+}
+
+.owner-bear .bear-float{
+  animation:
+    vybeBearFloat 3.2s ease-in-out infinite,
+    ownerBearPulse 2.4s ease-in-out infinite;
+}
+
+.owner-bear .bear-vmark{
+  filter:url(#blueGlow);
+}
+
+.owner-bear .bear-eyes{
+  filter:drop-shadow(0 0 8px #35b8ff);
+}
+
+.owner-bear::before{
+  content:"";
+}
+
+@keyframes ownerBearPulse{
+  0%,100%{
+    filter:drop-shadow(0 0 6px rgba(53,184,255,.35));
+  }
+  50%{
+    filter:drop-shadow(0 0 18px rgba(53,184,255,.8));
+  }
+}
   letter-spacing:-4px;
 }
 
@@ -224,7 +256,53 @@
     .owner-tag{position:absolute;top:16px;right:16px}
     .pet-actions{display:flex;gap:8px;margin-top:12px}
     .pet-actions button{flex:1}
+.bear-customizer{
+  margin-top:16px;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#080d13;
+}
 
+.bear-customizer-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.bear-customizer label{
+  display:grid;
+  gap:7px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.bear-customizer input,
+.bear-customizer select{
+  width:100%;
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0b1017;
+  color:var(--text);
+  padding:8px;
+}
+
+.bear-customizer input[type="color"]{
+  padding:4px;
+  cursor:pointer;
+}
+
+.bear-customizer .primary-btn{
+  width:100%;
+}
+
+@media(max-width:420px){
+  .bear-customizer-grid{
+    grid-template-columns:1fr;
+  }
+}
     .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:50;width:min(540px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:rgba(6,9,14,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line)}
     .nav-btn{border:0;background:transparent;color:var(--muted);display:grid;place-items:center;gap:2px;padding:5px}
     .nav-btn span{font-size:21px}
@@ -511,17 +589,15 @@
        <div class="vybe-bear-wrap">
   <svg class="vybe-bear" viewBox="0 0 240 260" aria-label="Vybe Bear" role="img">
     <defs>
-      <linearGradient id="bearBody" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#202732"/>
-        <stop offset="55%" stop-color="#0f141c"/>
-        <stop offset="100%" stop-color="#05070b"/>
-      </linearGradient>
-
+     <linearGradient id="bearBody" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0%" stop-color="var(--bear-fur, #202732)"/>
+  <stop offset="55%" stop-color="var(--bear-fur, #0f141c)"/>
+  <stop offset="100%" stop-color="#05070b"/>
+</linearGradient>
       <linearGradient id="bearFace" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#2b3442"/>
-        <stop offset="100%" stop-color="#121821"/>
-      </linearGradient>
-
+  <stop offset="0%" stop-color="var(--bear-fur, #2b3442)"/>
+  <stop offset="100%" stop-color="var(--bear-fur, #121821)"/>
+</linearGradient>
       <radialGradient id="muzzleGlow" cx="50%" cy="35%" r="70%">
         <stop offset="0%" stop-color="#4a5564"/>
         <stop offset="100%" stop-color="#202731"/>
@@ -601,7 +677,91 @@
         stroke-width="5"
         stroke-linecap="round"
       />
+<!-- Head accessories -->
+<g id="bearHeadLayer">
+  <g id="bearCap" class="bear-accessory hidden">
+    <path
+      d="M70 62
+         C82 34 104 25 126 27
+         C148 29 164 40 171 58
+         C151 50 97 48 70 62Z"
+      fill="#111824"
+      stroke="#35b8ff"
+      stroke-width="3"
+    />
+    <path
+      d="M120 52
+         C143 49 166 52 183 61
+         C164 64 146 64 126 61Z"
+      fill="#0b1017"
+      stroke="#35b8ff"
+      stroke-width="3"
+    />
+  </g>
 
+  <g id="bearCrown" class="bear-accessory hidden">
+    <path
+      d="M80 61
+         L90 34
+         L108 51
+         L120 27
+         L134 51
+         L151 34
+         L160 61Z"
+      fill="#f3c94f"
+      stroke="#fff2a8"
+      stroke-width="3"
+    />
+  </g>
+
+  <g id="bearHorns" class="bear-accessory hidden">
+    <path
+      d="M79 64 C57 46 59 28 70 19 C68 39 80 42 91 49Z"
+      fill="#202732"
+      stroke="#35b8ff"
+      stroke-width="3"
+    />
+    <path
+      d="M161 64 C183 46 181 28 170 19 C172 39 160 42 149 49Z"
+      fill="#202732"
+      stroke="#35b8ff"
+      stroke-width="3"
+    />
+  </g>
+</g>
+
+<!-- Face accessories -->
+<g id="bearFaceLayer">
+  <g id="bearGlasses" class="bear-accessory hidden">
+    <circle cx="92" cy="101" r="19" fill="none" stroke="#d8e8ff" stroke-width="5"/>
+    <circle cx="148" cy="101" r="19" fill="none" stroke="#d8e8ff" stroke-width="5"/>
+    <path d="M111 101 H129" stroke="#d8e8ff" stroke-width="5"/>
+  </g>
+
+  <g id="bearVisor" class="bear-accessory hidden">
+    <path
+      d="M70 88
+         Q120 73 170 88
+         L163 111
+         Q120 124 77 111Z"
+      fill="rgba(53,184,255,.35)"
+      stroke="#35b8ff"
+      stroke-width="4"
+    />
+  </g>
+
+  <g id="bearMask" class="bear-accessory hidden">
+    <path
+      d="M78 117
+         Q120 104 162 117
+         L154 151
+         Q120 166 86 151Z"
+      fill="#080d13"
+      stroke="#35b8ff"
+      stroke-width="3"
+    />
+  </g>
+</g>
       <g class="bear-eyes">
         <ellipse cx="92" cy="101" rx="12" ry="16" fill="#05070b"/>
         <ellipse cx="148" cy="101" rx="12" ry="16" fill="#05070b"/>
@@ -611,7 +771,7 @@
           cy="101"
           rx="5"
           ry="8"
-          fill="#35b8ff"
+         fill="var(--bear-eyes, #35b8ff)"
           filter="url(#blueGlow)"
         />
 
@@ -620,7 +780,7 @@
           cy="101"
           rx="5"
           ry="8"
-          fill="#35b8ff"
+         fill="var(--bear-eyes, #35b8ff)"
           filter="url(#blueGlow)"
         />
 
@@ -670,7 +830,7 @@
         font-size="46"
         font-weight="1000"
         font-family="Arial, sans-serif"
-        fill="#35b8ff"
+       fill="var(--bear-v, #35b8ff)"
         filter="url(#blueGlow)"
       >
         V
@@ -690,6 +850,73 @@
 </div>
         </div>
         <p class="muted" id="petName">Vybe Bear</p>
+        <button
+  type="button"
+  class="ghost-btn"
+  id="customizeBearBtn"
+  onclick="toggleBearCustomizer()"
+>
+  Customize Bear
+</button>
+
+<div id="bearCustomizer" class="bear-customizer hidden">
+  <div class="bear-customizer-grid">
+
+    <label>
+      <span>Fur</span>
+      <input id="bearFurColor" type="color" value="#161c25">
+    </label>
+
+    <label>
+      <span>Eyes</span>
+      <input id="bearEyeColor" type="color" value="#35b8ff">
+    </label>
+
+    <label>
+      <span>Chest V</span>
+      <input id="bearVColor" type="color" value="#35b8ff">
+    </label>
+
+    <label>
+      <span>Aura</span>
+      <select id="bearAura">
+        <option value="none">None</option>
+        <option value="blue">Blue Glow</option>
+        <option value="purple">Purple Glow</option>
+        <option value="gold">Gold Glow</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Head</span>
+      <select id="bearHeadAccessory">
+        <option value="none">None</option>
+        <option value="cap">Cap</option>
+        <option value="crown">Crown</option>
+        <option value="horns">Horns</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Face</span>
+      <select id="bearFaceAccessory">
+        <option value="none">None</option>
+        <option value="glasses">Glasses</option>
+        <option value="visor">Visor</option>
+        <option value="mask">Mask</option>
+      </select>
+    </label>
+
+  </div>
+
+  <button
+    type="button"
+    class="primary-btn"
+    onclick="saveBearCustomization()"
+  >
+    Save Bear
+  </button>
+</div>
       </div>
 
       <div id="profileGrid" class="profile-grid"></div>
@@ -1192,6 +1419,12 @@ await loadLikeStates();
     `;
   }).join("");
 }
+  function toggleBearCustomizer() {
+  const panel = document.querySelector("#bearCustomizer");
+  if (!panel) return;
+
+  panel.classList.toggle("hidden");
+}
   function closeComments() {
   $("#commentsModal").classList.add("hidden");
 }
@@ -1317,6 +1550,28 @@ async function openUserProfile(userId) {
         .toUpperCase();
 
     $("#ownerBadge").classList.toggle(
+      if (profile.is_owner) {
+  const furInput = document.querySelector("#bearFurColor");
+  const eyeInput = document.querySelector("#bearEyeColor");
+  const vInput = document.querySelector("#bearVColor");
+  const auraInput = document.querySelector("#bearAura");
+  const headInput = document.querySelector("#bearHeadAccessory");
+  const faceInput = document.querySelector("#bearFaceAccessory");
+
+  if (furInput) furInput.value = "#05070b";
+  if (eyeInput) eyeInput.value = "#35b8ff";
+  if (vInput) vInput.value = "#35b8ff";
+  if (auraInput) auraInput.value = "blue";
+  if (headInput) headInput.value = "none";
+  if (faceInput) faceInput.value = "mask";
+
+  previewBearCustomization();
+
+  const svg = document.querySelector(".vybe-bear");
+  svg?.classList.add("owner-bear");
+} else {
+  document.querySelector(".vybe-bear")?.classList.remove("owner-bear");
+}
       "hidden",
       !profile.is_owner
     );
@@ -1357,6 +1612,120 @@ async function openUserProfile(userId) {
     toast(err.message || "Could not open profile.");
   }
 }
+  function previewBearCustomization() {
+    const headAccessory =
+  document.querySelector("#bearHeadAccessory")?.value || "none";
+
+const faceAccessory =
+  document.querySelectorAll("#bearHeadLayer .bear-accessory")
+  .forEach(el => el.classList.add("hidden"));
+
+document.querySelectorAll("#bearFaceLayer .bear-accessory")
+  .forEach(el => el.classList.add("hidden"));
+
+if (headAccessory === "cap") {
+  document.querySelector("#bearCap")?.classList.remove("hidden");
+}
+
+if (headAccessory === "crown") {
+  document.querySelector("#bearCrown")?.classList.remove("hidden");
+}
+
+if (headAccessory === "horns") {
+  document.querySelector("#bearHorns")?.classList.remove("hidden");
+}
+
+if (faceAccessory === "glasses") {
+  document.querySelector("#bearGlasses")?.classList.remove("hidden");
+}
+
+if (faceAccessory === "visor") {
+  document.querySelector("#bearVisor")?.classList.remove("hidden");
+}
+
+if (faceAccessory === "mask") {
+  document.querySelector("#bearMask")?.classList.remove("hidden");
+}
+  document.querySelector("#bearFaceAccessory")?.value || "none";
+  const fur = document.querySelector("#bearFurColor")?.value || "#161c25";
+  const eyes = document.querySelector("#bearEyeColor")?.value || "#35b8ff";
+  const vColor = document.querySelector("#bearVColor")?.value || "#35b8ff";
+  const aura = document.querySelector("#bearAura")?.value || "none";
+
+  const svg = document.querySelector(".vybe-bear");
+  if (!svg) return;
+
+  svg.style.setProperty("--bear-fur", fur);
+  svg.style.setProperty("--bear-eyes", eyes);
+  svg.style.setProperty("--bear-v", vColor);
+
+  svg.classList.remove(
+    "aura-blue",
+    "aura-purple",
+    "aura-gold"
+  );
+
+  if (aura !== "none") {
+    svg.classList.add(`aura-${aura}`);
+  }
+}
+
+function setupBearCustomizer() {
+  [
+    "#bearFurColor",
+    "#bearEyeColor",
+    "#bearVColor",
+    "#bearAura",
+    "#bearHeadAccessory",
+    "#bearFaceAccessory"
+  ].forEach(selector => {
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    el.addEventListener("input", previewBearCustomization);
+    el.addEventListener("change", previewBearCustomization);
+  });
+}
+  async function saveBearCustomization() {
+  if (!state.user) {
+    toast("Log in first.");
+    return;
+  }
+
+  const cosmetics = {
+    fur: document.querySelector("#bearFurColor")?.value || "#161c25",
+    eyes: document.querySelector("#bearEyeColor")?.value || "#35b8ff",
+    vColor: document.querySelector("#bearVColor")?.value || "#35b8ff",
+    aura: document.querySelector("#bearAura")?.value || "none",
+    headAccessory:
+      document.querySelector("#bearHeadAccessory")?.value || "none",
+    faceAccessory:
+      document.querySelector("#bearFaceAccessory")?.value || "none"
+  };
+
+  const { error } = await supabaseClient
+    .from("user_pets")
+    .upsert(
+      {
+        user_id: state.user.id,
+        pet_name: "Vybe Bear",
+        pet_type: "bear",
+        cosmetics,
+        updated_at: new Date().toISOString()
+      },
+      {
+        onConflict: "user_id"
+      }
+    );
+
+  if (error) {
+    console.error("Bear save error:", error);
+    toast(error.message || "Could not save bear.");
+    return;
+  }
+
+  toast("Vybe Bear saved.");
+}
   async function loadProfile() {
     if (!state.user) return;
     const profile = await ensureProfile(state.user);
@@ -1385,7 +1754,51 @@ $("#editProfileBtn").removeAttribute("data-following");
     $("#followerCount").textContent = followersResult.count || 0;
     $("#followingCount").textContent = followingResult.count || 0;
     $("#petName").textContent = petResult.data?.pet_name || "Vybe Bear";
+const cosmetics = petResult.data?.cosmetics || {};
 
+const fur = cosmetics.fur || "#161c25";
+const eyes = cosmetics.eyes || "#35b8ff";
+const vColor = cosmetics.vColor || "#35b8ff";
+const aura = cosmetics.aura || "none";
+const headAccessory = cosmetics.headAccessory || "none";
+const faceAccessory = cosmetics.faceAccessory || "none";
+
+const furInput = document.querySelector("#bearFurColor");
+const eyeInput = document.querySelector("#bearEyeColor");
+const vInput = document.querySelector("#bearVColor");
+const auraInput = document.querySelector("#bearAura");
+const headInput = document.querySelector("#bearHeadAccessory");
+const faceInput = document.querySelector("#bearFaceAccessory");
+
+if (furInput) furInput.value = fur;
+if (eyeInput) eyeInput.value = eyes;
+if (vInput) vInput.value = vColor;
+if (auraInput) auraInput.value = aura;
+if (headInput) headInput.value = headAccessory;
+if (faceInput) faceInput.value = faceAccessory;
+
+previewBearCustomization();
+    if (profile.is_owner) {
+  const furInput = document.querySelector("#bearFurColor");
+  const eyeInput = document.querySelector("#bearEyeColor");
+  const vInput = document.querySelector("#bearVColor");
+  const auraInput = document.querySelector("#bearAura");
+  const headInput = document.querySelector("#bearHeadAccessory");
+  const faceInput = document.querySelector("#bearFaceAccessory");
+
+  if (furInput) furInput.value = "#05070b";
+  if (eyeInput) eyeInput.value = "#35b8ff";
+  if (vInput) vInput.value = "#35b8ff";
+  if (auraInput) auraInput.value = "blue";
+  if (headInput) headInput.value = "none";
+  if (faceInput) faceInput.value = "mask";
+
+  previewBearCustomization();
+
+  document.querySelector(".vybe-bear")?.classList.add("owner-bear");
+} else {
+  document.querySelector(".vybe-bear")?.classList.remove("owner-bear");
+}
     $("#profileGrid").innerHTML = (postsResult.data || []).map(post => {
       const media = post.media_type === "video"
         ? `<video src="${escapeAttr(post.media_url)}" muted playsinline></video>`
@@ -1649,6 +2062,8 @@ await loadFeed();
 
   // Startup: always begin at the daily Vybe screen.
   (async function init() {
+    setupBearCustomizer();
+    
     const savedVibe = localStorage.getItem("vybes-vibe");
     if (savedVibe) {
       state.vibe = savedVibe;

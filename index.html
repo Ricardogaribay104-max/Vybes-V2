@@ -948,7 +948,12 @@ await loadLikeStates();
 
     return `
       <div class="comment-item">
-        <strong>${escapeHtml(name)}</strong>
+       <strong
+  onclick="openUserProfile('${comment.user_id}')"
+  style="cursor:pointer;"
+>
+  ${escapeHtml(name)}
+</strong>
         <div>${escapeHtml(comment.body)}</div>
       </div>
     `;
